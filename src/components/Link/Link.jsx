@@ -68,7 +68,7 @@ const Link = ({ link }) => {
           </React.Fragment>
         }
       />
-      <p className={classes.inlineButtons}>
+      <div className={classes.inlineButtons}>
         <ListItemIcon>
           <Button
             variant="text"
@@ -91,7 +91,7 @@ const Link = ({ link }) => {
             Down Vote
           </Button>
         </ListItemIcon>
-      </p>
+      </div>
     </ListItem>
   );
 };
