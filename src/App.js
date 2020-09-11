@@ -39,35 +39,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const links = [
-  {
-    name: "Hacker News",
-    url: "(https://news.ycombinator.com/)",
-    points: 6,
-  },
-  {
-    name: "Product Hunt",
-    url: "(https://producthunt.com/)",
-    points: 4,
-  },
-  {
-    name: "Quora",
-    url: "(https://www.quora.com/)",
-    points: 3,
-  },
-];
-
 function App() {
   const classes = useStyles();
 
-  const [display, setDisplay] = useState(true);
+  const [display, setDisplay] = useState(false);
+  const [links, setLinks] = useState(() => {
+    return JSON.parse(localStorage.getItem("links")) || [];
+  });
+
+  const handleAddNewLink = (updatedLinks) => {
+    localStorage.setItem("links", JSON.stringify(updatedLinks));
+    setLinks(updatedLinks);
+  };
+
+  const handleDeleteLink = (link) => {
+    var links = [...links];
+    links.splice(links.indexOf(link), 1);
+    localStorage.setItem("links", JSON.stringify(links));
+    setLinks(links);
+  };
 
   if (display)
     return (
       <Container component="main" maxWidth="xl">
         <Header />
         <div className={classes.paper}>
-          <LinkForm handleCloseForm={() => setDisplay(false)} />
+          <LinkForm
+            links={links}
+            handleAddNewLink={handleAddNewLink}
+            handleCloseForm={() => setDisplay(false)}
+          />
         </div>
       </Container>
     );

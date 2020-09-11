@@ -26,11 +26,35 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LinkForm = ({ handleCloseForm }) => {
+const LinkForm = ({ links, handleCloseForm, handleAddNewLink }) => {
   const classes = useStyles();
 
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
+
+  const isValidForm = () => name !== "" && url !== "";
+
+  const clearFormFields = () => {
+    setName("");
+    setUrl("");
+  };
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    if (isValidForm()) {
+      // Create new link
+      const newLink = {
+        name,
+        url,
+        points: 0,
+      };
+
+      const updatedLinks = [newLink, ...links];
+
+      handleAddNewLink(updatedLinks);
+      clearFormFields();
+    }
+  };
 
   return (
     <React.Fragment>
@@ -43,7 +67,7 @@ const LinkForm = ({ handleCloseForm }) => {
         <span className={classes.iconText}>Return to List</span>
       </Button>
 
-      <form className={classes.form}>
+      <form className={classes.form} onSubmit={handleFormSubmit}>
         <Typography variant="h4" gutterBottom>
           Add New Link
         </Typography>
@@ -54,7 +78,7 @@ const LinkForm = ({ handleCloseForm }) => {
           variant="outlined"
           value={name}
           className={classes.textField}
-          handleChange={(event) => setName(event.target.value)}
+          onChange={(event) => setName(event.target.value)}
         />
         <TextField
           id="url"
@@ -62,9 +86,9 @@ const LinkForm = ({ handleCloseForm }) => {
           variant="outlined"
           value={url}
           className={classes.textField}
-          handleChange={(event) => setUrl(event.target.value)}
+          onChange={(event) => setUrl(event.target.value)}
         />
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" type="submit">
           ADD
         </Button>
       </form>
