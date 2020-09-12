@@ -1,13 +1,9 @@
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { makeStyles } from "@material-ui/core/styles";
-import { TextField, Typography, Button, Snackbar } from "@material-ui/core";
+import { TextField, Typography, Button } from "@material-ui/core";
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace";
-import MuiAlert from "@material-ui/lab/Alert";
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+import CustomSnackbar from "../Snackbar/CustomSnackbar";
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -75,11 +71,7 @@ const LinkForm = ({ links, handleCloseForm, handleAddNewLink }) => {
     setOpen(true);
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
+  const handleClose = () => {
     setOpen(false);
   };
 
@@ -124,19 +116,8 @@ const LinkForm = ({ links, handleCloseForm, handleAddNewLink }) => {
           ADD
         </Button>
       </form>
-      <Snackbar
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        open={open}
-        autoHideDuration={6000}
-        onClose={() => setOpen(false)}
-      >
-        <Alert onClose={handleClose} severity="success">
-          {message}
-        </Alert>
-      </Snackbar>
+
+      <CustomSnackbar open={open} message={message} handleClose={handleClose} />
     </React.Fragment>
   );
 };

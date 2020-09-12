@@ -4,7 +4,6 @@ import {
   Container,
   Typography,
   Button,
-  Snackbar,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -19,11 +18,7 @@ import { grey } from "@material-ui/core/colors";
 import Header from "./components/Header/Header";
 import LinkList from "./components/Link/LinkList";
 import LinkForm from "./components/Link/LinkForm";
-import MuiAlert from "@material-ui/lab/Alert";
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+import CustomSnackbar from "./components/Snackbar/CustomSnackbar";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -133,10 +128,7 @@ function App() {
   };
 
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
+    setMessage("");
     setOpen(false);
   };
 
@@ -258,19 +250,7 @@ function App() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        open={open}
-        autoHideDuration={6000}
-        onClose={() => setOpen(false)}
-      >
-        <Alert onClose={handleClose} severity="success">
-          {message}
-        </Alert>
-      </Snackbar>
+      <CustomSnackbar open={open} message={message} handleClose={handleClose} />
     </React.Fragment>
   );
 }
