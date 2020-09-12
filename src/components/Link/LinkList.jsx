@@ -9,8 +9,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const options = ["Most Voted (Z->A)", "Less Voted (A->Z)"];
-
 const LinkList = ({
   links,
   displayConfirmationDialog,
@@ -19,39 +17,19 @@ const LinkList = ({
 }) => {
   const classes = useStyles();
 
-  const [orderBy, setOrderBy] = useState("");
-
   return (
-    <React.Fragment>
-      <FormControl className={classes.formControl}>
-        <NativeSelect
-          name="orderBy"
-          value={orderBy}
-          inputProps={{ "aria-label": "orderBy" }}
-          onChange={(e) => setOrderBy(e.target.value)}
-        >
-          <option value="">Order By</option>
-          {options.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))}
-        </NativeSelect>
-      </FormControl>
-
-      <List dense>
-        {links &&
-          links.map((link, index) => (
-            <Link
-              key={link.id}
-              link={link}
-              displayConfirmationDialog={displayConfirmationDialog}
-              handleUpVote={handleUpVote}
-              handleDownVote={handleDownVote}
-            />
-          ))}
-      </List>
-    </React.Fragment>
+    <List dense>
+      {links &&
+        links.map((link, index) => (
+          <Link
+            key={link.id}
+            link={link}
+            displayConfirmationDialog={displayConfirmationDialog}
+            handleUpVote={handleUpVote}
+            handleDownVote={handleDownVote}
+          />
+        ))}
+    </List>
   );
 };
 

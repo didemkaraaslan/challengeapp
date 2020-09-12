@@ -10,6 +10,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  FormControl,
+  NativeSelect,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
 import AddIcon from "@material-ui/icons/Add";
@@ -56,7 +58,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(1),
   },
+  formControl: {
+    minWidth: 240,
+  },
 }));
+
+const options = ["Most Voted (Z->A)", "Less Voted (A->Z)"];
 
 function App() {
   const classes = useStyles();
@@ -71,6 +78,7 @@ function App() {
   const [links, setLinks] = useState(() => {
     return JSON.parse(localStorage.getItem("links")) || [];
   });
+  const [orderBy, setOrderBy] = useState("");
 
   const handleAddNewLink = (updatedLinks) => {
     localStorage.setItem("links", JSON.stringify(updatedLinks));
@@ -132,9 +140,19 @@ function App() {
     setOpen(false);
   };
 
+  const orderLinks = (links) => {
+    if (orderBy === "Most Voted (Z->A)") {
+      return links.sort((a, b) => b.points - a.points);
+    }
+
+    return links.sort((a, b) => a.points - b.points);
+  };
+
+  const orderedLinks = orderBy === "" ? [...links] : orderLinks(links);
+
   const indexOfLastLink = currentPage * linksPerPage;
   const indexOfFirstLink = indexOfLastLink - linksPerPage;
-  const currentLinks = links.slice(indexOfFirstLink, indexOfLastLink);
+  const currentLinks = orderedLinks.slice(indexOfFirstLink, indexOfLastLink);
 
   if (display)
     return (
@@ -182,6 +200,24 @@ function App() {
 
           {/* Divider */}
           <p className={classes.divider} />
+
+          {/* Order By */}
+          <FormControl className={classes.formControl}>
+            <NativeSelect
+              name="orderBy"
+              value={orderBy}
+              inputProps={{ "aria-label": "orderBy" }}
+              onChange={(e) => setOrderBy(e.target.value)}
+            >
+              <option value="">Order By</option>
+              {options.map((option, index) => (
+                <option key={index} value={option}>
+                  {option}
+                </option>
+              ))}
+            </NativeSelect>
+          </FormControl>
+
           <LinkList
             links={currentLinks}
             displayConfirmationDialog={displayConfirmationDialog}
