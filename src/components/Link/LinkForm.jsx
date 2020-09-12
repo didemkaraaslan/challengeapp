@@ -1,7 +1,13 @@
 import React, { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { makeStyles } from "@material-ui/core/styles";
-import { TextField, Typography, Button, Icon } from "@material-ui/core";
+import { TextField, Typography, Button, Snackbar } from "@material-ui/core";
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace";
+import MuiAlert from "@material-ui/lab/Alert";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -24,11 +30,16 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     margin: theme.spacing(2),
   },
+  button: {
+    margin: theme.spacing(2),
+  },
 }));
 
 const LinkForm = ({ links, handleCloseForm, handleAddNewLink }) => {
   const classes = useStyles();
 
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
 
@@ -44,6 +55,7 @@ const LinkForm = ({ links, handleCloseForm, handleAddNewLink }) => {
     if (isValidForm()) {
       // Create new link
       const newLink = {
+        id: uuidv4(),
         name,
         url,
         points: 0,
@@ -52,8 +64,23 @@ const LinkForm = ({ links, handleCloseForm, handleAddNewLink }) => {
       const updatedLinks = [newLink, ...links];
 
       handleAddNewLink(updatedLinks);
+
+      displaySuccessMessage(name);
       clearFormFields();
     }
+  };
+
+  const displaySuccessMessage = (name) => {
+    setMessage(`${name.toUpperCase()}  added.`);
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
   };
 
   return (
@@ -88,10 +115,28 @@ const LinkForm = ({ links, handleCloseForm, handleAddNewLink }) => {
           className={classes.textField}
           onChange={(event) => setUrl(event.target.value)}
         />
-        <Button variant="contained" color="primary" type="submit">
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          className={classes.button}
+        >
           ADD
         </Button>
       </form>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={() => setOpen(false)}
+      >
+        <Alert onClose={handleClose} severity="success">
+          {message}
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   );
 };

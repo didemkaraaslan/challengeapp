@@ -5,7 +5,7 @@ import { grey } from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
   header: {
-    margin: theme.spacing(4),
+    margin: theme.spacing(2),
   },
   divider: {
     border: `0.5px solid ${grey[500]}`,

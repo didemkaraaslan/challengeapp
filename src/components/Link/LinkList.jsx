@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  List,
-  FormControl,
-  Select,
-  NativeSelect,
-  InputLabel,
-} from "@material-ui/core";
+import { List, FormControl, NativeSelect } from "@material-ui/core";
 import Link from "./Link";
 
 const useStyles = makeStyles((theme) => ({
@@ -17,10 +11,21 @@ const useStyles = makeStyles((theme) => ({
 
 const options = ["Most Voted (Z->A)", "Less Voted (A->Z)"];
 
-const LinkList = ({ links }) => {
+const LinkList = ({
+  links,
+  displayConfirmationDialog,
+  handleUpVote,
+  handleDownVote,
+}) => {
   const classes = useStyles();
 
   const [orderBy, setOrderBy] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const handleListItemClick = (event, index) => {
+    setSelectedIndex(index);
+  };
+
   return (
     <React.Fragment>
       <FormControl className={classes.formControl}>
@@ -39,8 +44,19 @@ const LinkList = ({ links }) => {
         </NativeSelect>
       </FormControl>
 
-      <List>
-        {links && links.map((link, index) => <Link key={index} link={link} />)}
+      <List dense>
+        {links &&
+          links.map((link, index) => (
+            <Link
+              key={link.id}
+              link={link}
+              selectedIndex={selectedIndex}
+              handleListItemClick={handleListItemClick}
+              displayConfirmationDialog={displayConfirmationDialog}
+              handleUpVote={handleUpVote}
+              handleDownVote={handleDownVote}
+            />
+          ))}
       </List>
     </React.Fragment>
   );
