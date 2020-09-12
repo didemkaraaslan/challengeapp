@@ -4,11 +4,6 @@ import {
   Container,
   Typography,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
   FormControl,
   NativeSelect,
 } from "@material-ui/core";
@@ -19,6 +14,7 @@ import Header from "./components/Header/Header";
 import LinkList from "./components/Link/LinkList";
 import LinkForm from "./components/Link/LinkForm";
 import CustomSnackbar from "./components/Snackbar/CustomSnackbar";
+import CustomDialog from "./components/CustomDialog/CustomDialog";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -65,8 +61,9 @@ function App() {
 
   const [openDialog, setOpenDialog] = useState(false);
   const [linkToDelete, setLinkToDelete] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
   const [display, setDisplay] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [linksPerPage, setLinksPerPage] = useState(5);
@@ -80,7 +77,9 @@ function App() {
     setLinks(updatedLinks);
   };
 
-  const handleDeleteLink = ({ id, name, url, points }) => {
+  const handleDeleteLink = () => {
+    const { id, name, url, points } = linkToDelete;
+
     const updatedLinks = links.filter((link) => link.id !== id);
     localStorage.setItem("links", JSON.stringify(updatedLinks));
     setLinks(updatedLinks);
@@ -119,17 +118,21 @@ function App() {
 
   const displayConfirmationDialog = (link) => {
     setLinkToDelete(link);
+    setDialogMessage(`Do you want to remove ${link.name} ? `);
     setOpenDialog(true);
   };
 
   const displayMessage = (name) => {
-    setMessage(`${name.toUpperCase()} removed.`);
-    setOpen(true);
+    setSnackMessage(`${name.toUpperCase()} removed.`);
+    setOpenSnackbar(true);
   };
 
-  const handleClose = (event, reason) => {
-    setMessage("");
-    setOpen(false);
+  const handleCloseSnackbar = (event, reason) => {
+    setOpenSnackbar(false);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   const orderLinks = (links) => {
@@ -145,6 +148,15 @@ function App() {
   const indexOfLastLink = currentPage * linksPerPage;
   const indexOfFirstLink = indexOfLastLink - linksPerPage;
   const currentLinks = orderedLinks.slice(indexOfFirstLink, indexOfLastLink);
+
+  const Root = (props) => (
+    <React.Fragment>
+      <Header />
+      <Container component="main" maxWidth="md">
+        <div className={classes.paper}>{props.children}</div>
+      </Container>
+    </React.Fragment>
+  );
 
   if (display)
     return (
@@ -226,31 +238,19 @@ function App() {
         </div>
       </Container>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>{"Remove Link"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you want to remove {linkToDelete && linkToDelete.name} ?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => handleDeleteLink(linkToDelete)}
-            color="primary"
-          >
-            OK
-          </Button>
-          <Button
-            onClick={() => setOpenDialog(false)}
-            color="primary"
-            autoFocus
-          >
-            CANCEL
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <CustomDialog
+        open={openDialog}
+        title={"Remove Link"}
+        message={dialogMessage}
+        handleConfirm={handleDeleteLink}
+        handleClose={handleCloseDialog}
+      />
 
-      <CustomSnackbar open={open} message={message} handleClose={handleClose} />
+      <CustomSnackbar
+        open={openSnackbar}
+        message={snackMessage}
+        handleClose={handleCloseSnackbar}
+      />
     </React.Fragment>
   );
 }
