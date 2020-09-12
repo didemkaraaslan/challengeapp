@@ -20,11 +20,6 @@ const LinkList = ({
   const classes = useStyles();
 
   const [orderBy, setOrderBy] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
-  };
 
   return (
     <React.Fragment>
@@ -50,8 +45,6 @@ const LinkList = ({
             <Link
               key={link.id}
               link={link}
-              selectedIndex={selectedIndex}
-              handleListItemClick={handleListItemClick}
               displayConfirmationDialog={displayConfirmationDialog}
               handleUpVote={handleUpVote}
               handleDownVote={handleDownVote}

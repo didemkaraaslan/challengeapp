@@ -1,20 +1,31 @@
 import React, { useState } from "react";
 import cx from "classnames";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  ListItem,
-  Button,
-  Typography,
-  IconButton,
-} from "@material-ui/core";
-import { ArrowUpward, ArrowDownward, Menu } from "@material-ui/icons/";
+import { ListItem, Button, Typography, IconButton } from "@material-ui/core";
+import { ArrowUpward, ArrowDownward } from "@material-ui/icons/";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { grey } from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
+  listItemRoot: {
+    width: "100%",
+    display: "flex",
+    position: "relative",
+    boxSizing: "border-box",
+    textAlign: "left",
+    alignItems: "center",
+    paddingTop: "8px",
+    paddingBottom: "8px",
+    justifyContent: "flex-start",
+    textDecoration: "none",
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.08)",
+      "& $hide": {
+        display: "block",
+        color: "red",
+      },
+    },
+  },
   root: {
     display: "flex",
     flexGrow: 1,
@@ -36,10 +47,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     marginTop: theme.spacing(4),
   },
-  deleteIcon: {
-    height: 38,
-    width: 38,
-  },
   pointBox: {
     background: grey[50],
     border: "1px solid #ccc",
@@ -54,17 +61,18 @@ const useStyles = makeStyles((theme) => ({
   selected: {
     background: "rgba(0, 0, 0, 0.08)",
   },
-  upright: {
+  deleteIcon: {
     position: "absolute",
     right: 0,
     top: 0,
+  },
+  hide: {
+    display: "none",
   },
 }));
 
 const Link = ({
   link,
-  selectedIndex,
-  handleListItemClick,
   displayConfirmationDialog,
   handleUpVote,
   handleDownVote,
@@ -72,15 +80,14 @@ const Link = ({
   const classes = useStyles();
   const theme = useTheme();
 
-  const isSelected = selectedIndex === link.id;
-
   return (
     <ListItem
       alignItems="flex-start"
+      classes={{
+        root: classes.listItemRoot,
+      }}
       className={classes.listItem}
-      onClick={(event) => handleListItemClick(event, link.id)}
       disableGutters
-      selected={isSelected}
       button
     >
       <div className={classes.root}>
@@ -135,16 +142,14 @@ const Link = ({
             </div>
           </div>
 
-          {isSelected && (
-            <IconButton
-              aria-label="delete"
-              color="secondary"
-              className={cx(classes.upright, classes.deleteIcon)}
-              onClick={() => displayConfirmationDialog(link)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          )}
+          <IconButton
+            aria-label="delete"
+            color="secondary"
+            className={cx(classes.deleteIcon, classes.hide)}
+            onClick={() => displayConfirmationDialog(link)}
+          >
+            <DeleteIcon />
+          </IconButton>
         </div>
       </div>
     </ListItem>
