@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Container,
@@ -13,8 +14,14 @@ import { grey } from "@material-ui/core/colors";
 import Header from "./components/Header/Header";
 import LinkList from "./components/Link/LinkList";
 import LinkForm from "./components/Link/LinkForm";
-import CustomSnackbar from "./components/Snackbar/CustomSnackbar";
+import CustomSnackbar from "./components/CustomSnackbar/CustomSnackbar";
 import CustomDialog from "./components/CustomDialog/CustomDialog";
+import {
+  saveToLocalStorage,
+  getFromLocalStorage,
+  sortInAscendingOrder,
+  sortInDescendingOrder,
+} from "./functions";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -68,22 +75,33 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [linksPerPage, setLinksPerPage] = useState(5);
   const [links, setLinks] = useState(() => {
-    return JSON.parse(localStorage.getItem("links")) || [];
+    return getFromLocalStorage("links") || [];
   });
   const [orderBy, setOrderBy] = useState("");
 
-  const handleAddNewLink = (updatedLinks) => {
-    localStorage.setItem("links", JSON.stringify(updatedLinks));
+  const addNewLink = (name, url) => {
+    const updatedLinks = [
+      {
+        id: uuidv4(),
+        name,
+        url,
+        points: 0,
+      },
+      ...links,
+    ];
+
+    saveToLocalStorage("links", updatedLinks);
+
     setLinks(updatedLinks);
   };
 
   const handleDeleteLink = () => {
-    const { id, name, url, points } = linkToDelete;
+    const { id, name } = linkToDelete;
 
     const updatedLinks = links.filter((link) => link.id !== id);
-    localStorage.setItem("links", JSON.stringify(updatedLinks));
-    setLinks(updatedLinks);
+    saveToLocalStorage("links", updatedLinks);
 
+    setLinks(updatedLinks);
     setOpenDialog(false);
     displayMessage(name);
   };
@@ -94,11 +112,10 @@ function App() {
         item.points = item.points + 1;
         return item;
       }
-
       return item;
     });
 
-    localStorage.setItem("links", JSON.stringify(updatedLinks));
+    saveToLocalStorage("links", updatedLinks);
     setLinks(updatedLinks);
   };
 
@@ -108,11 +125,10 @@ function App() {
         item.points = item.points - 1;
         return item;
       }
-
       return item;
     });
 
-    localStorage.setItem("links", JSON.stringify(updatedLinks));
+    saveToLocalStorage("links", updatedLinks);
     setLinks(updatedLinks);
   };
 
@@ -137,10 +153,10 @@ function App() {
 
   const orderLinks = (links) => {
     if (orderBy === "Most Voted (Z->A)") {
-      return links.sort((a, b) => b.points - a.points);
+      return sortInDescendingOrder(links, "points");
     }
 
-    return links.sort((a, b) => a.points - b.points);
+    return sortInAscendingOrder(links, "points");
   };
 
   const orderedLinks = orderBy === "" ? [...links] : orderLinks(links);
@@ -148,15 +164,6 @@ function App() {
   const indexOfLastLink = currentPage * linksPerPage;
   const indexOfFirstLink = indexOfLastLink - linksPerPage;
   const currentLinks = orderedLinks.slice(indexOfFirstLink, indexOfLastLink);
-
-  const Root = (props) => (
-    <React.Fragment>
-      <Header />
-      <Container component="main" maxWidth="md">
-        <div className={classes.paper}>{props.children}</div>
-      </Container>
-    </React.Fragment>
-  );
 
   if (display)
     return (
@@ -166,7 +173,7 @@ function App() {
           <div className={classes.paper}>
             <LinkForm
               links={links}
-              handleAddNewLink={handleAddNewLink}
+              handleAddNewLink={addNewLink}
               handleCloseForm={() => setDisplay(false)}
             />
           </div>

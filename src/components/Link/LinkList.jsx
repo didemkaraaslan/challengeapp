@@ -1,13 +1,6 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { List, FormControl, NativeSelect } from "@material-ui/core";
+import React from "react";
+import { List } from "@material-ui/core";
 import Link from "./Link";
-
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    minWidth: 240,
-  },
-}));
 
 const LinkList = ({
   links,
@@ -15,8 +8,6 @@ const LinkList = ({
   handleUpVote,
   handleDownVote,
 }) => {
-  const classes = useStyles();
-
   return (
     <List dense>
       {links &&

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField, Typography, Button } from "@material-ui/core";
 import KeyboardBackspaceIcon from "@material-ui/icons/KeyboardBackspace";
-import CustomSnackbar from "../Snackbar/CustomSnackbar";
+import CustomSnackbar from "../CustomSnackbar/CustomSnackbar";
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -49,17 +48,7 @@ const LinkForm = ({ links, handleCloseForm, handleAddNewLink }) => {
   const handleFormSubmit = (event) => {
     event.preventDefault();
     if (isValidForm()) {
-      // Create new link
-      const newLink = {
-        id: uuidv4(),
-        name,
-        url,
-        points: 0,
-      };
-
-      const updatedLinks = [newLink, ...links];
-
-      handleAddNewLink(updatedLinks);
+      handleAddNewLink(name, url);
 
       displaySuccessMessage(name);
       clearFormFields();

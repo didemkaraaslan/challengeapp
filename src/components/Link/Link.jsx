@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import cx from "classnames";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { ListItem, Button, Typography, IconButton } from "@material-ui/core";
@@ -40,9 +40,6 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flex: "1 0 auto",
   },
-  cover: {
-    width: 151,
-  },
   controls: {
     display: "flex",
     marginTop: theme.spacing(4),
@@ -57,9 +54,6 @@ const useStyles = makeStyles((theme) => ({
 
   listItem: {
     margin: theme.spacing(1),
-  },
-  selected: {
-    background: "rgba(0, 0, 0, 0.08)",
   },
   deleteIcon: {
     position: "absolute",
