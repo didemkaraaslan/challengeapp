@@ -1,28 +1,28 @@
 import {
   saveToLocalStorage,
   getFromLocalStorage,
-  sortInAscendingOrder,
-  sortInDescendingOrder,
+  sortByMostVoted,
+  sortByLessVoted,
+  sortByLastUpdatedTime,
 } from "./functions";
+import moment from "moment";
 
 const inputArray = [
   {
-    id: 0,
-    name: "Hacker News",
-    url: "(https://news.ycombinator.com/)",
-    points: 6,
+    points: 1,
+    lastUpdated: moment("2013-03-24"),
   },
   {
-    id: 1,
-    name: "Product Hunt",
-    url: "(https://producthunt.com/)",
     points: 3,
+    lastUpdated: moment("2011-03-24"),
   },
   {
-    id: 2,
-    name: "Reddit",
-    url: "(https://www.reddit.com/)",
-    points: 8,
+    points: 5,
+    lastUpdated: moment("2011-03-24"),
+  },
+  {
+    points: 3,
+    lastUpdated: moment("2016-03-24"),
   },
 ];
 
@@ -36,54 +36,76 @@ test("getFromLocalStorage - gets (key, 1) from localStorage", () => {
   expect(getFromLocalStorage("key")).toBe(1);
 });
 
-test("sortInAscendingOrder - sorts given array of objects in ascending order", () => {
+test("sortByLessVoted", () => {
   const expectedArray = [
     {
-      id: 1,
-      name: "Product Hunt",
-      url: "(https://producthunt.com/)",
+      points: 1,
+      lastUpdated: moment("2013-03-24"),
+    },
+    {
       points: 3,
+      lastUpdated: moment("2016-03-24"),
     },
     {
-      id: 0,
-      name: "Hacker News",
-      url: "(https://news.ycombinator.com/)",
-      points: 6,
+      points: 3,
+      lastUpdated: moment("2011-03-24"),
     },
     {
-      id: 2,
-      name: "Reddit",
-      url: "(https://www.reddit.com/)",
-      points: 8,
+      points: 5,
+      lastUpdated: moment("2011-03-24"),
     },
   ];
-  expect(sortInAscendingOrder(inputArray, "points")).toMatchObject(
-    expectedArray
-  );
+
+  expect(sortByLessVoted(inputArray)).toMatchObject(expectedArray);
 });
 
-test("sortInDescendingOrder - sorts given array of objects in descending order", () => {
+test("sortByMostVoted", () => {
   const expectedArray = [
     {
-      id: 2,
-      name: "Reddit",
-      url: "(https://www.reddit.com/)",
-      points: 8,
+      points: 5,
+      lastUpdated: moment("2011-03-24"),
     },
     {
-      id: 0,
-      name: "Hacker News",
-      url: "(https://news.ycombinator.com/)",
-      points: 6,
-    },
-    {
-      id: 1,
-      name: "Product Hunt",
-      url: "(https://producthunt.com/)",
       points: 3,
+      lastUpdated: moment("2016-03-24"),
+    },
+    {
+      points: 3,
+      lastUpdated: moment("2011-03-24"),
+    },
+    {
+      points: 1,
+      lastUpdated: moment("2013-03-24"),
     },
   ];
-  expect(sortInDescendingOrder(inputArray, "points")).toMatchObject(
-    expectedArray
-  );
+
+  expect(sortByMostVoted(inputArray)).toMatchObject(expectedArray);
+});
+
+test("sortByLastUpdatedTime", () => {
+  const inputArray = [
+    {
+      lastUpdated: moment("2013-03-24"),
+    },
+    {
+      lastUpdated: moment("2016-03-24"),
+    },
+    {
+      lastUpdated: moment("2011-03-24"),
+    },
+  ];
+
+  const expectedArray = [
+    {
+      lastUpdated: moment("2016-03-24"),
+    },
+    {
+      lastUpdated: moment("2013-03-24"),
+    },
+    {
+      lastUpdated: moment("2011-03-24"),
+    },
+  ];
+
+  expect(sortByLastUpdatedTime(inputArray)).toMatchObject(expectedArray);
 });

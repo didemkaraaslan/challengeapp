@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -19,8 +20,9 @@ import CustomDialog from "./components/CustomDialog/CustomDialog";
 import {
   saveToLocalStorage,
   getFromLocalStorage,
-  sortInAscendingOrder,
-  sortInDescendingOrder,
+  sortByMostVoted,
+  sortByLessVoted,
+  sortByLastUpdatedTime,
 } from "./functions";
 
 const useStyles = makeStyles((theme) => ({
@@ -86,6 +88,7 @@ function App() {
         name,
         url,
         points: 0,
+        lastUpdated: moment().valueOf(),
       },
       ...links,
     ];
@@ -110,6 +113,7 @@ function App() {
     const updatedLinks = [...links].filter((item) => {
       if (item.id === link.id) {
         item.points = item.points + 1;
+        item.lastUpdated = moment().valueOf();
         return item;
       }
       return item;
@@ -123,6 +127,7 @@ function App() {
     const updatedLinks = [...links].filter((item) => {
       if (item.id === link.id) {
         item.points = item.points - 1;
+        item.lastUpdated = moment().valueOf();
         return item;
       }
       return item;
@@ -152,14 +157,17 @@ function App() {
   };
 
   const orderLinks = (links) => {
-    if (orderBy === "Most Voted (Z->A)") {
-      return sortInDescendingOrder(links, "points");
+    switch (orderBy) {
+      case "Most Voted (Z->A)":
+        return sortByMostVoted(links);
+      case "Less Voted (A->Z)":
+        return sortByLessVoted(links);
+      default:
+        return sortByLastUpdatedTime(links);
     }
-
-    return sortInAscendingOrder(links, "points");
   };
 
-  const orderedLinks = orderBy === "" ? [...links] : orderLinks(links);
+  const orderedLinks = orderLinks(links);
 
   const indexOfLastLink = currentPage * linksPerPage;
   const indexOfFirstLink = indexOfLastLink - linksPerPage;
